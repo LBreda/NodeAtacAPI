@@ -114,7 +114,7 @@ I'm working on a English translation of the output. You can find the
 Italian version on the linked API function page.
 
 ###getNextDeparture
-`atac.getRoute` is a wrapper for [paline.ProssimaPartenza](https://bitbucket.org/agenziamobilita/muoversi-a-roma/wiki/paline.ProssimaPartenza).
+`atac.getNextDeparture` is a wrapper for [paline.ProssimaPartenza](https://bitbucket.org/agenziamobilita/muoversi-a-roma/wiki/paline.ProssimaPartenza).
 
 It will return the next departure from the first stop for a given route.
 
