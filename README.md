@@ -41,7 +41,7 @@ object on the second parameter. The response object is a dictionary:
 * `bool abilitata`: enabled / disabled
 * `int id_news`: news ID for the disabled status, or -1
 * `string collocazione`: Description of the location
-* `VehiclesList veicoli`: Array of incoming vehicles, ordered by time of arrival
+* `VehiclesList arrivi`: Array of incoming vehicles, ordered by time of arrival
 * `StopList primi_per_palina`: Array of Bus stop poles
 
 Each `StopList` array element is a dictionary:
@@ -58,7 +58,7 @@ Each `VehiclesList` array element is a dictionary:
 * `bool non_monitorata`: if true, realtime data is not available (and the following keys are not set)
 * `bool nessun_autobus`: if true, there are no buses for the line (and the following keys are not set)
 * `bool disabilitata`: if true, the realtime data is not available at the moment (and the keys following the next are not set)
-* `bool news_id`: ID of the notice which explains why the data is not available, or -1
+* `int news_id`: ID of the notice which explains why the data is not available, or -1
 * `string id_percorso`: Route ID
 * `string destinazione`: Final destination name (may be undefined)
 * `string carteggi`: Route papers
