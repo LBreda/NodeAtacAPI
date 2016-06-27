@@ -21,7 +21,7 @@ function connect(apiKey, callback) {
  * @param {string} apiKey - API Key
  * @param {string} busStop - Bus stop number
  * @param {BusStopCallback} callback
- * @exports getBusStop
+ * @exports atac.getBusStop
  */
 atac.getBusStop = function (apiKey, busStop, callback) {
     connect(apiKey, (error, token) => {
@@ -39,7 +39,7 @@ atac.getBusStop = function (apiKey, busStop, callback) {
  * @param {string} apiKey
  * @param {string} line
  * @param {RouteCallback} callback
- * @exports getRoutes
+ * @exports atac.getRoutes
  */
 atac.getRoutes = function (apiKey, line, callback) {
     connect(apiKey, (error, token) => {
@@ -58,7 +58,7 @@ atac.getRoutes = function (apiKey, line, callback) {
  * @param {string} routeId
  * @see atac.getRoutes
  * @param {LineCallback} callback
- * @exports getRoute
+ * @exports atac.getRoute
  */
 atac.getRoute = function (apiKey, routeId, callback) {
     connect(apiKey, (error, token) => {
@@ -76,7 +76,7 @@ atac.getRoute = function (apiKey, routeId, callback) {
  * @param apiKey
  * @param routeId
  * @param {NextDepartureCallback} callback
- * @exports getNextDeparture
+ * @exports atac.getNextDeparture
  */
 atac.getNextDeparture = function (apiKey, routeId, callback) {
     connect(apiKey, (error, token) => {
