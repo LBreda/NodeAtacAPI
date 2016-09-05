@@ -27,6 +27,7 @@ atac.getBusStop = function (apiKey, busStop, callback) {
     connect(apiKey, (error, token) => {
         if (error) {
             console.log('Auth error');
+            callback(error)
         }
         else {
             palineClient.methodCall('paline.Previsioni', [token, busStop, 'it'], callback);
