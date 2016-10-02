@@ -13,7 +13,32 @@ var atac = exports;
  * @param {AuthCallback} callback - ServerReply
  */
 function connect(apiKey, callback) {
-    authClient.methodCall('autenticazione.Accedi', [apiKey, ''], callback);
+
+    // ConnectionTimeout
+    var timeoutProtect = setTimeout(function() {
+
+        // Clear the local timer variable, indicating the timeout has been triggered.
+        timeoutProtect = null;
+
+        // Error
+        console.log('Connection timeout');
+        callback(true);
+
+    }, 5000);
+
+    // Connection function
+    authClient.methodCall('autenticazione.Accedi', [apiKey, ''], (error, value) => {
+
+        // Proceed only if the timeout handler has not yet fired.
+        if (timeoutProtect) {
+
+            // Clear the scheduled timeout handler
+            clearTimeout(timeoutProtect);
+
+            // Result
+            callback(error, value);
+        }
+    });
 }
 
 /**
@@ -27,7 +52,7 @@ atac.getBusStop = function (apiKey, busStop, callback) {
     connect(apiKey, (error, token) => {
         if (error) {
             console.log('Auth error');
-            callback(error)
+            callback(error);
         }
         else {
             palineClient.methodCall('paline.Previsioni', [token, busStop, 'it'], callback);
