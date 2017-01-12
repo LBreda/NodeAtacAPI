@@ -73,8 +73,10 @@ Each `VehiclesList` array element is a dictionary:
 * `bool a_capolinea`: True if the bus is reaching the first stop
 * `bool in_arrivo`: True if the bus is coming at the current stop
 * `int tempo_attesa`: Waiting time for the bus on the current stop (in minutes)
+* `int tempo_attesa_secondi`: Waiting time for the bus on the current stop (in seconds)
 * `int distanza_fermate`: Distance of the bus from the current stop (in stops)
 * `int id_veicolo`: Vehicle ID number
+* `int banda`: Undocumented
   
 ###getRoutes
 `atac.getRoutes` is a wrapper for [paline.Percorsi](https://bitbucket.org/agenziamobilita/muoversi-a-roma/wiki/paline.Percorsi).
