@@ -127,6 +127,101 @@ It returns a "error" boolean on the first parameter, and the response
 object on the second parameter. The response object is a `string` in
 the format `Y-m-d H:i:s`.
 
+###getNewsCategories
+`atac.getNewsCategories` is a wrapper for the undocumented news.Categorie endpoint.
+
+It will return an list of the available news categories, and the number of
+the news contained in each category.
+
+It needs only one parameter: the API key.
+
+It returns a "error" boolean on the first parameter, and the response object on the
+second parameter. The response object is an array of dictionaries in this format:
+
+* `int id_categoria`: Category ID
+* `string nome`: Category name
+* `int conteggio`: Number of news in the category
+
+###getNewsFirstPage
+`atac.getNewsFirstPage` is a wrapper for the undocumented news.PrimaPagina endpoint.
+
+It will return a list of the main news.
+
+It needs only one parameter: the API key.
+
+It returns a "error" boolean on the first parameter, and the response object on the
+second parameter. The response object is an array of dictionaries in this format:
+
+* `int id_news`: News item id
+* `int id_categoria`: Category ID
+* `string titolo`: News title
+* `string contenuto`: News content
+* `date data_pubblicazione`: Publishing date
+
+
+###getNewsCategoriesForSingleNews
+`atac.getNewsCategoriesForSingleNews` is a wrapper for the undocumented news.CategorieNews endpoint.
+
+It will return an list of the categories in which a single news is published.
+
+It needs two parameters: the API key and the News Item id.
+
+It returns a "error" boolean on the first parameter, and the response object on the
+second parameter. The response object is an array of dictionaries in this format:
+
+* `int id_categoria`: Category ID
+* `string nome_categoria`: Category name
+
+###getNewsByCategory
+`atac.getNewsByCategory` is a wrapper for the undocumented news.PerCategoria endpoint.
+
+It will return a list of news for a single category.
+
+It needs two parameters: the API key and a Category id.
+
+It returns a "error" boolean on the first parameter, and the response object on the
+second parameter. The response object is an array of dictionaries in this format:
+
+* `int id_news`: News item id
+* `int id_categoria`: Category ID
+* `string titolo`: News title
+* `string contenuto`: News content
+* `date data_pubblicazione`: Publishing date
+
+###getNewsSingle
+`atac.getNewsSingle` is a wrapper for the undocumented news.Singola endpoint.
+
+It will return a single detailed news.
+
+It needs two parameters: the API key and a Category id.
+
+It returns a "error" boolean on the first parameter, and the response object on the
+second parameter. The response object is a dictionary in this format:
+
+* `int id_news`: News item id
+* `int id_categoria`: Category ID
+* `string titolo`: News title
+* `string contenuto`: News content
+* `date data_pubblicazione`: Publishing date
+* `int prec`: Previous News ID
+* `int succ`: Next News ID
+
+###getNewsAll
+`atac.getNewsByCategory` is a wrapper for the undocumented news.Tutte endpoint.
+
+It will return a list of all the news.
+
+It needs only one parameter: the API key.
+
+It returns a "error" boolean on the first parameter, and the response object on the
+second parameter. The response object is an array of dictionaries in this format:
+
+* `int id_news`: News item id
+* `int id_categoria`: Category ID
+* `string titolo`: News title
+* `string contenuto`: News content
+* `date data_pubblicazione`: Publishing date
+
 To Do
 -----
 * Support for the `paline.PalinaLinee`, `paline.Veicolo` and

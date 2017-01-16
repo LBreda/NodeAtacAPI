@@ -4,6 +4,7 @@ const atacHost = 'muovi.roma.it';
 var xmlrpc = require('xmlrpc');
 var authClient = xmlrpc.createClient({host: atacHost, path: '/ws/xml/autenticazione/1'});
 var palineClient = xmlrpc.createClient({host: atacHost, path: '/ws/xml/paline/7'});
+var newsClient = xmlrpc.createClient({host: atacHost, path: '/ws/xml/news/2'});
 
 var atac = exports;
 
@@ -15,7 +16,7 @@ var atac = exports;
 function connect(apiKey, callback) {
 
     // ConnectionTimeout
-    var timeoutProtect = setTimeout(function() {
+    var timeoutProtect = setTimeout(function () {
 
         // Clear the local timer variable, indicating the timeout has been triggered.
         timeoutProtect = null;
@@ -116,6 +117,106 @@ atac.getNextDeparture = function (apiKey, routeId, callback) {
 };
 
 /**
+ * Gets a list of news categories
+ * @param apiKey
+ * @param {NewsCategoriesListCallback} callback
+ */
+atac.getNewsCategories = function (apiKey, callback) {
+    connect(apiKey, (error, token) => {
+        if (error) {
+            console.log('getNewsCategories error');
+        }
+        else {
+            newsClient.methodCall('news.Categorie', [token, 'it'], callback);
+        }
+    });
+};
+
+/**
+ * Gets a list of most important news
+ * @param apiKey
+ * @param {NewsItemListCallback} callback
+ */
+atac.getNewsFirstPage = function (apiKey, callback) {
+    connect(apiKey, (error, token) => {
+        if (error) {
+            console.log('getNewsFirstPage error');
+        }
+        else {
+            newsClient.methodCall('news.PrimaPagina', [token, 'it'], callback);
+        }
+    });
+};
+
+/**
+ * Gets a list of the categories for a single news
+ * @param apiKey
+ * @param {int} newsId id of a news item
+ * @param {NewsItemCategoriesListCallback} callback
+ */
+atac.getNewsCategoriesForSingleNews = function (apiKey, newsId, callback) {
+    connect(apiKey, (error, token) => {
+        if (error) {
+            console.log('getNewsCategoriesForSingleNews error');
+        }
+        else {
+            newsClient.methodCall('news.CategorieNews', [token, 'it', newsId], callback);
+        }
+    });
+};
+
+/**
+ * Gets a list of news for a category
+ * @param apiKey
+ * @param {int} categoryId id of a category
+ * @param {NewsItemListCallback} callback
+ */
+atac.getNewsByCategory = function (apiKey, categoryId, callback) {
+    connect(apiKey, (error, token) => {
+        if (error) {
+            console.log('getNewsByCategory error');
+        }
+        else {
+            newsClient.methodCall('news.PerCategoria', [token, 'it', categoryId], callback);
+        }
+    });
+};
+
+/**
+ * Gets a single news item
+ * @param apiKey
+ * @param {int} newsId id of a news item
+ * @param {int} categoryId id of a category
+ * @param {NewsItemCallback} callback
+ */
+atac.getNewsSingle = function (apiKey, newsId, categoryId, callback) {
+    connect(apiKey, (error, token) => {
+        if (error) {
+            console.log('getNewsSingle error');
+        }
+        else {
+            newsClient.methodCall('news.Singola', [token, 'it', newsId, categoryId], callback);
+        }
+    });
+};
+
+/**
+ * Gets all the news
+ * @param apiKey
+ * @param {NewsItemListCallback} callback
+ */
+atac.getNewsAll = function (apiKey, callback) {
+    connect(apiKey, (error, token) => {
+        if (error) {
+            console.log('getNewsAll error');
+        }
+        else {
+            newsClient.methodCall('news.Tutte', [token, 'it'], callback);
+        }
+    });
+};
+
+/**
  * Callback function for authentication
  * @callback AuthCallback
  * @property {boolean} error - Error
@@ -151,6 +252,34 @@ atac.getNextDeparture = function (apiKey, routeId, callback) {
  */
 
 /**
+ * Callback function for News Categories data
+ * @callback NewsCategoriesListCallback
+ * @property {boolean} error - Error
+ * @property {AtacNewsCategoriesListResponse} response - Server response
+ */
+
+/**
+ * Callback function for News Item data
+ * @callback NewsItemListCallback
+ * @property {boolean} error - Error
+ * @property {AtacNewsItemListResponse} response - Server response
+ */
+
+/**
+ * Callback function for News Item Categories List
+ * @callback NewsItemCategoriesListCallback
+ * @property {boolean} error - Error
+ * @property {AtacNewsItemCategoryListResponse} response - Server response
+ */
+
+/**
+ * Callback function for News Item data
+ * @callback NewsItemCallback
+ * @property {boolean} error - Error
+ * @property {AtacNewsItemResponse} response - Server response
+ */
+
+/**
  * Atac XMLRPC Bus Stop response
  * @typedef {Object} AtacBusStopResponse
  * @property {string} id_richesta - Request ID
@@ -176,6 +305,34 @@ atac.getNextDeparture = function (apiKey, routeId, callback) {
  * @typedef {Object} AtacNextDepartureResponse
  * @property {string} id_richesta - Request ID
  * @property {string} risposta - Response Payload
+ */
+
+/**
+ * Atac XMLRPC News Categories List response
+ * @typedef {Object} AtacNewsCategoriesListResponse
+ * @property {string} id_richiesta - Request ID
+ * @property {NewsCategoriesList[]} risposta - Response Payload
+ */
+
+/**
+ * Atac XMLRPC News Item List response
+ * @typedef {Object} AtacNewsItemListResponse
+ * @property {string} id_richiesta - Request ID
+ * @property {NewsItem[]} risposta - Response Payload
+ */
+
+/**
+ * Atac XMLRPC News Item Category List response
+ * @typedef {Object} AtacNewsItemCategoryListResponse
+ * @property {string} id_richiesta - Request ID
+ * @property {NewsItemCategoryList} - Response Payload
+ */
+
+/**
+ * Atac XMLRPC News Item response
+ * @typedef {Object} AtacNewsItemResponse
+ * @property {string} id_richiesta - Request ID
+ * @property {NewsDetailedItem} risposta - Response Payload
  */
 
 /**
@@ -289,4 +446,41 @@ atac.getNextDeparture = function (apiKey, routeId, callback) {
  * @typedef {object} timetableElement
  * @property {string} ora - Hour
  * @property {string[]} minuti - List of minutes
+ */
+
+/**
+ * News Categories list element
+ * @typedef {object} NewsCategoriesList
+ * @property {int} id_categoria - Category ID
+ * @property {string} nome - Category name
+ * @property {int} conteggio - Number of news in the category
+ */
+
+/**
+ * News Item
+ * @typedef {object} NewsItem
+ * @property {int} id_news - News item ID
+ * @property {int} id_categoria - Category ID
+ * @property {string} titolo - News title
+ * @property {string} contenuto - News content
+ * @property {date} data_pubblicazione - Publishing date
+ */
+
+/**
+ * News Item
+ * @typedef {object} NewsDetailedItem
+ * @property {int} id_news - News item ID
+ * @property {int} id_categoria - Category ID
+ * @property {string} titolo - News title
+ * @property {string} contenuto - News content
+ * @property {date} data_pubblicazione - Publishing date
+ * @property {int} prec - Previous News ID
+ * @property {int} succ - Next News ID
+ */
+
+/**
+ * News Item Category List
+ * @typedef {object} NewsItemCategoryList
+ * @property {int} id_categoria - Category ID
+ * @property {string} nome_categoria - Category Name
  */
