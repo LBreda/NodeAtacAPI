@@ -72,6 +72,7 @@ Each `VehiclesList` array element is a dictionary:
 * `bool aria`: True if the bus has a (probably out of order) air conditioner
 * `bool a_capolinea`: True if the bus is reaching the first stop
 * `bool in_arrivo`: True if the bus is coming at the current stop
+* `date prossima_partenza`: Next departure from the first stop
 * `int tempo_attesa`: Waiting time for the bus on the current stop (in minutes)
 * `int tempo_attesa_secondi`: Waiting time for the bus on the current stop (in seconds)
 * `int distanza_fermate`: Distance of the bus from the current stop (in stops)
