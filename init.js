@@ -389,9 +389,12 @@ atac.getNewsAll = function (apiKey, callback) {
  * @property {boolean} aria - True if the bus has an air conditioner
  * @property {boolean} a_capolinea - True if the bus is reaching the first stop
  * @property {boolean} in_arrivo - True if the bus is coming at the current stop
+ * @property {date} prossima_partenza - Next departure from the first stop
  * @property {int} tempo_attesa - Waiting time for the bus on the current stop (in minutes)
+ * @property {int} tempo_attesa_secondi - Waiting time for the bus on the current stop (in seconds)
  * @property {int} distanza_fermate - Distance of the bus from the current stop (in stops)
  * @property {int} id_veicolo - Vehicle ID number
+ * @property {string} banda - Undocumented by ATAC
  */
 
 /**
