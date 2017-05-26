@@ -1,6 +1,6 @@
 {
   "name": "NodeAtacAPI",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Node.js client for the Rome Public Transport realtime API",
   "main": "init.js",
   "scripts": {
