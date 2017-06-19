@@ -25,7 +25,7 @@ Functions
 ---------
 Each available function is a wrapper for the official API.
 
-###getBusStop
+### getBusStop
 `atac.getBusStop` is a wrapper for [paline.Previsioni](https://bitbucket.org/agenziamobilita/muoversi-a-roma/wiki/paline.Previsioni).
 
 It will return all the data about a bus stop, including the list of the
@@ -79,7 +79,7 @@ Each `VehiclesList` array element is a dictionary:
 * `int id_veicolo`: Vehicle ID number
 * `int banda`: Undocumented
   
-###getRoutes
+### getRoutes
 `atac.getRoutes` is a wrapper for [paline.Percorsi](https://bitbucket.org/agenziamobilita/muoversi-a-roma/wiki/paline.Percorsi).
 
 It will return a list of routes for a given line. A line may have one
@@ -102,7 +102,7 @@ Each `RouteList` element is a dictionary:
 * `string descrizione`: Route description
 * `string capolinea`: Route last stop
   
-###getRoute
+### getRoute
 `atac.getRoute` is a wrapper for [paline.Percorso](https://bitbucket.org/agenziamobilita/muoversi-a-roma/wiki/paline.Percorso).
 
 It will return all the data for a given route.
@@ -116,7 +116,7 @@ object on the second parameter. The response object is a dictionary.
 I'm working on a English translation of the output. You can find the
 Italian version on the linked API function page.
 
-###getNextDeparture
+### getNextDeparture
 `atac.getNextDeparture` is a wrapper for [paline.ProssimaPartenza](https://bitbucket.org/agenziamobilita/muoversi-a-roma/wiki/paline.ProssimaPartenza).
 
 It will return the next departure from the first stop for a given route.
@@ -128,7 +128,7 @@ It returns a "error" boolean on the first parameter, and the response
 object on the second parameter. The response object is a `string` in
 the format `Y-m-d H:i:s`.
 
-###getNewsCategories
+### getNewsCategories
 `atac.getNewsCategories` is a wrapper for the undocumented news.Categorie endpoint.
 
 It will return an list of the available news categories, and the number of
@@ -143,7 +143,7 @@ second parameter. The response object is an array of dictionaries in this format
 * `string nome`: Category name
 * `int conteggio`: Number of news in the category
 
-###getNewsFirstPage
+### getNewsFirstPage
 `atac.getNewsFirstPage` is a wrapper for the undocumented news.PrimaPagina endpoint.
 
 It will return a list of the main news.
@@ -160,7 +160,7 @@ second parameter. The response object is an array of dictionaries in this format
 * `date data_pubblicazione`: Publishing date
 
 
-###getNewsCategoriesForSingleNews
+### getNewsCategoriesForSingleNews
 `atac.getNewsCategoriesForSingleNews` is a wrapper for the undocumented news.CategorieNews endpoint.
 
 It will return an list of the categories in which a single news is published.
@@ -173,7 +173,7 @@ second parameter. The response object is an array of dictionaries in this format
 * `int id_categoria`: Category ID
 * `string nome_categoria`: Category name
 
-###getNewsByCategory
+### getNewsByCategory
 `atac.getNewsByCategory` is a wrapper for the undocumented news.PerCategoria endpoint.
 
 It will return a list of news for a single category.
@@ -189,7 +189,7 @@ second parameter. The response object is an array of dictionaries in this format
 * `string contenuto`: News content
 * `date data_pubblicazione`: Publishing date
 
-###getNewsSingle
+### getNewsSingle
 `atac.getNewsSingle` is a wrapper for the undocumented news.Singola endpoint.
 
 It will return a single detailed news.
@@ -207,7 +207,7 @@ second parameter. The response object is a dictionary in this format:
 * `int prec`: Previous News ID
 * `int succ`: Next News ID
 
-###getNewsAll
+### getNewsAll
 `atac.getNewsByCategory` is a wrapper for the undocumented news.Tutte endpoint.
 
 It will return a list of all the news.
