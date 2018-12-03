@@ -16,14 +16,19 @@ You can install the package with npm:
   
 You can use it by requiring it:
 
-    var atac = require('NodeAtacAPI');
+    const AtacApi = require('NodeAtacAPI');
+    const atac = new AtacApi("API_KEY");
     
 In order to use the Atac API, you need an API Key. You can get a key
 on the [Atac Website](http://muovi.roma.it/dev/key).
+
+Tip: you can omit the parameter in AtacApi constructor and use the environment variable ATAC_API_KEY
     
 Functions
 ---------
 Each available function is a wrapper for the official API.
+
+Each method will return a Promise.
 
 ### getBusStop
 `atac.getBusStop` is a wrapper for [paline.Previsioni](https://bitbucket.org/agenziamobilita/muoversi-a-roma/wiki/paline.Previsioni).
@@ -31,11 +36,9 @@ Each available function is a wrapper for the official API.
 It will return all the data about a bus stop, including the list of the
 incoming buses.
 
-It needs three parameters: the API key, the bus stop number and a
-callback function with two parameters.
+It needs the bus stop number.
 
-It returns a "error" boolean on the first parameter, and the response
-object on the second parameter. The response object is a dictionary:
+The response object is a dictionary:
 
 * `string nome`: the bus stop name
 * `bool abilitata`: enabled / disabled
@@ -85,11 +88,9 @@ Each `VehiclesList` array element is a dictionary:
 It will return a list of routes for a given line. A line may have one
 or more routes (usually two, one for each way).
 
-It needs three parameters: the API key, the line number and a
-callback function with two parameters.
+It needs the line number.
 
-It returns a "error" boolean on the first parameter, and the response
-object on the second parameter. The response object is a dictionary:
+The response object is a dictionary:
 
 * `bool monitorata`: True if the line has real-time data
 * `bool abilitata`: True if the line is currently enabled
@@ -107,11 +108,9 @@ Each `RouteList` element is a dictionary:
 
 It will return all the data for a given route.
 
-It needs three parameters: the API key, the route ID and a
-callback function with two parameters.
+It needs the route ID.
 
-It returns a "error" boolean on the first parameter, and the response
-object on the second parameter. The response object is a dictionary.
+The response object is a dictionary.
 
 I'm working on a English translation of the output. You can find the
 Italian version on the linked API function page.
@@ -121,11 +120,9 @@ Italian version on the linked API function page.
 
 It will return the next departure from the first stop for a given route.
 
-It needs three parameters: the API key, the route ID and a
-callback function with two parameters.
+It needs the route ID.
 
-It returns a "error" boolean on the first parameter, and the response
-object on the second parameter. The response object is a `string` in
+The response object is a `string` in
 the format `Y-m-d H:i:s`.
 
 ### getNewsCategories
@@ -134,10 +131,9 @@ the format `Y-m-d H:i:s`.
 It will return an list of the available news categories, and the number of
 the news contained in each category.
 
-It needs only one parameter: the API key.
+It needs no parameters.
 
-It returns a "error" boolean on the first parameter, and the response object on the
-second parameter. The response object is an array of dictionaries in this format:
+The response object is an array of dictionaries in this format:
 
 * `int id_categoria`: Category ID
 * `string nome`: Category name
@@ -148,10 +144,9 @@ second parameter. The response object is an array of dictionaries in this format
 
 It will return a list of the main news.
 
-It needs only one parameter: the API key.
+It needs no parameters.
 
-It returns a "error" boolean on the first parameter, and the response object on the
-second parameter. The response object is an array of dictionaries in this format:
+The response object is an array of dictionaries in this format:
 
 * `int id_news`: News item id
 * `int id_categoria`: Category ID
@@ -165,10 +160,9 @@ second parameter. The response object is an array of dictionaries in this format
 
 It will return an list of the categories in which a single news is published.
 
-It needs two parameters: the API key and the News Item id.
+It needs the News Item id.
 
-It returns a "error" boolean on the first parameter, and the response object on the
-second parameter. The response object is an array of dictionaries in this format:
+The response object is an array of dictionaries in this format:
 
 * `int id_categoria`: Category ID
 * `string nome_categoria`: Category name
@@ -178,10 +172,9 @@ second parameter. The response object is an array of dictionaries in this format
 
 It will return a list of news for a single category.
 
-It needs two parameters: the API key and a Category id.
+It needs the Category id.
 
-It returns a "error" boolean on the first parameter, and the response object on the
-second parameter. The response object is an array of dictionaries in this format:
+The response object is an array of dictionaries in this format:
 
 * `int id_news`: News item id
 * `int id_categoria`: Category ID
@@ -194,10 +187,9 @@ second parameter. The response object is an array of dictionaries in this format
 
 It will return a single detailed news.
 
-It needs two parameters: the API key and a Category id.
+It needs the Category id.
 
-It returns a "error" boolean on the first parameter, and the response object on the
-second parameter. The response object is a dictionary in this format:
+The response object is a dictionary in this format:
 
 * `int id_news`: News item id
 * `int id_categoria`: Category ID
@@ -212,10 +204,9 @@ second parameter. The response object is a dictionary in this format:
 
 It will return a list of all the news.
 
-It needs only one parameter: the API key.
+It needs no parameters.
 
-It returns a "error" boolean on the first parameter, and the response object on the
-second parameter. The response object is an array of dictionaries in this format:
+The response object is an array of dictionaries in this format:
 
 * `int id_news`: News item id
 * `int id_categoria`: Category ID
@@ -225,9 +216,9 @@ second parameter. The response object is an array of dictionaries in this format
 
 To Do
 -----
-* Support for the `paline.PalinaLinee`, `paline.Veicolo` and
-`paline.SmartSearch` API functions
+* Support for the `paline.PalinaLinee`, `paline.Veicolo` API functions
+* Documentation for `paline.SmartSearch`
 * Better support for the `paline.Percorso` API function
 * Testing framework
 * Better documentation for the return values
-* (much) better error handling
+* (much) better error handling (in part solved with Promise rejection)
