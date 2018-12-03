@@ -1,283 +1,177 @@
-'use strict';
+const { createClient } = require("xmlrpc");
+const { asyncRpcCall } = require("./utils");
 
-const atacHost = 'muovi.roma.it';
-var xmlrpc = require('xmlrpc');
-var authClient = xmlrpc.createClient({host: atacHost, path: '/ws/xml/autenticazione/1'});
-var palineClient = xmlrpc.createClient({host: atacHost, path: '/ws/xml/paline/7'});
-var newsClient = xmlrpc.createClient({host: atacHost, path: '/ws/xml/news/2'});
+const ATAC_HOST = "muovi.roma.it";
 
-var atac = exports;
+const authClient = createClient({
+  host: ATAC_HOST,
+  path: "/ws/xml/autenticazione/1"
+});
 
-/**
- * Connects to the API server
- * @param {string} apiKey - Atac API key
- * @param {AuthCallback} callback - ServerReply
- */
-function connect(apiKey, callback) {
+const palineClient = createClient({
+  host: ATAC_HOST,
+  path: "/ws/xml/paline/7"
+});
 
-    // ConnectionTimeout
-    var timeoutProtect = setTimeout(function () {
+const newsClient = createClient({ host: ATAC_HOST, path: "/ws/xml/news/2" });
 
-        // Clear the local timer variable, indicating the timeout has been triggered.
-        timeoutProtect = null;
+module.exports = class AtacApi {
+  constructor(apiKey) {
+    this.apiKey = apiKey || process.env.ATAC_API_KEY;
 
-        // Error
-        console.log('Connection timeout');
-        callback(true);
+    if (!this.apiKey) {
+      // No API Key
+      throw new Error(
+        "No API Key provided. Pass it to AtacApi constructor or put it into ATAC_API_KEY env variable"
+      );
+    }
+  }
 
-    }, 5000);
+  /**
+   * Connects to the API server
+   * @returns {Promise<string>} Session token
+   */
+  async connect() {
+    return asyncRpcCall(authClient, "autenticazione.Accedi", [this.apiKey, ""]);
+  }
 
-    // Connection function
-    authClient.methodCall('autenticazione.Accedi', [apiKey, ''], (error, value) => {
+  /**
+   * Get data about a bus stop
+   * @param {string} busStop - Bus stop number
+   * @returns {Promise<AtacBusStopResponse>}
+   */
+  async getBusStop(busStop) {
+    const session = await this.connect();
+    return asyncRpcCall(palineClient, "paline.Previsioni", [
+      session,
+      busStop,
+      "it"
+    ]);
+  }
 
-        // Proceed only if the timeout handler has not yet fired.
-        if (timeoutProtect) {
+  /**
+   * Get the routes of a bus line
+   * @param {string} line
+   * @returns {Promise<AtacRouteResponse>}
+   */
+  async getRoutes(line) {
+    const session = await this.connect();
+    return asyncRpcCall(palineClient, "paline.Percorsi", [session, line, "it"]);
+  }
 
-            // Clear the scheduled timeout handler
-            clearTimeout(timeoutProtect);
+  /**
+   * Get informations about a single route
+   * @param {string} routeId
+   * @see atac.getRoutes
+   * @returns {Promise<AtacLineResponse>}
+   */
+  async getRoute(routeId) {
+    const session = await this.connect();
+    return asyncRpcCall(palineClient, "paline.Percorso", [
+      session,
+      routeId,
+      "",
+      "",
+      "it"
+    ]);
+  }
 
-            // Result
-            callback(error, value);
-        }
-    });
-}
+  /**
+   * Get the next departure from the first stop for a single route
+   * @param routeId
+   * @returns {Promise<AtacNextDepartureResponse>}
+   */
+  async getNextDeparture(routeId) {
+    const session = await this.connect();
+    return asyncRpcCall(palineClient, "paline.ProssimaPartenza", [
+      session,
+      routeId,
+      "it"
+    ]);
+  }
 
-/**
- * Gets data about a bus stop
- * @param {string} apiKey - API Key
- * @param {string} busStop - Bus stop number
- * @param {BusStopCallback} callback
- * @exports atac.getBusStop
- */
-atac.getBusStop = function (apiKey, busStop, callback) {
-    connect(apiKey, (error, token) => {
-        if (error) {
-            console.log('Auth error');
-            callback(error);
-        }
-        else {
-            palineClient.methodCall('paline.Previsioni', [token, busStop, 'it'], callback);
-        }
-    });
+  /**
+   * Get a list of news categories
+   * @returns {Promise<AtacNewsCategoriesListResponse>}
+   */
+  async getNewsCategories() {
+    const session = await this.connect();
+    return asyncRpcCall(newsClient, "news.Categorie", [session, "it"]);
+  }
+
+  /**
+   * Get a list of most important news
+   * @returns {Promise<AtacNewsItemListResponse>}
+   */
+  async getNewsFirstPage() {
+    const session = await this.connect();
+    return asyncRpcCall(newsClient, "news.PrimaPagina", [session, "it"]);
+  }
+
+  /**
+   * Get a list of the categories for a single news
+   * @param {int} newsId id of a news item
+   * @returns {Promise<AtacNewsItemCategoryListResponse>}
+   */
+  async getNewsCategoriesForSingleNews(newsId) {
+    const session = await this.connect();
+    return asyncRpcCall(newsClient, "news.CategorieNews", [
+      session,
+      "it",
+      newsId
+    ]);
+  }
+
+  /**
+   * Get a list of news for a category
+   * @param {int} categoryId id of a category
+   * @returns {Promise<AtacNewsItemListResponse>}
+   */
+  async getNewsByCategory(categoryId) {
+    const session = await this.connect();
+    return asyncRpcCall(newsClient, "news.PerCategoria", [
+      session,
+      "it",
+      categoryId
+    ]);
+  }
+
+  /**
+   * Get a single news item
+   * @param {int} newsId id of a news item
+   * @param {int} categoryId id of a category
+   * @returns {Promise<AtacNewsItemResponse>}
+   */
+  async getNewsSingle(newsId, categoryId) {
+    const session = await this.connect();
+    return asyncRpcCall(newsClient, "news.Singola", [
+      session,
+      "it",
+      newsId,
+      categoryId
+    ]);
+  }
+
+  /**
+   * Get all the news
+   * @returns {Promise<AtacNewsItemListResponse>}
+   */
+  async getNewsAll() {
+    const session = await this.connect();
+    return asyncRpcCall(newsClient, "news.Tutte", [session, "it"]);
+  }
+
+  /**
+   * Get bus stops and bus lines by name
+   * Use paline.SmartSearch method
+   */
+  async searchByQuery(query) {
+    const session = await this.connect();
+    return asyncRpcCall(palineClient, "paline.SmartSearch", [session, query]);
+  }
 };
 
-/**
- * Gets the routes of a bus line
- * @param {string} apiKey
- * @param {string} line
- * @param {RouteCallback} callback
- * @exports atac.getRoutes
- */
-atac.getRoutes = function (apiKey, line, callback) {
-    connect(apiKey, (error, token) => {
-        if (error) {
-            console.log('getRoutes error');
-        }
-        else {
-            palineClient.methodCall('paline.Percorsi', [token, line, 'it'], callback);
-        }
-    });
-};
-
-/**
- * Gets informations about a single route
- * @param {string} apiKey
- * @param {string} routeId
- * @see atac.getRoutes
- * @param {LineCallback} callback
- * @exports atac.getRoute
- */
-atac.getRoute = function (apiKey, routeId, callback) {
-    connect(apiKey, (error, token) => {
-        if (error) {
-            console.log('getRoute error')
-        }
-        else {
-            palineClient.methodCall('paline.Percorso', [token, routeId, '', '', 'it'], callback);
-        }
-    });
-};
-
-/**
- * Gets the next departure from the first stop for a single route
- * @param apiKey
- * @param routeId
- * @param {NextDepartureCallback} callback
- * @exports atac.getNextDeparture
- */
-atac.getNextDeparture = function (apiKey, routeId, callback) {
-    connect(apiKey, (error, token) => {
-        if (error) {
-            console.log('getNextDeparture error');
-        }
-        else {
-            palineClient.methodCall('paline.prossimaPartenza', [token, routeId, 'it'], callback);
-        }
-    });
-};
-
-/**
- * Gets a list of news categories
- * @param apiKey
- * @param {NewsCategoriesListCallback} callback
- */
-atac.getNewsCategories = function (apiKey, callback) {
-    connect(apiKey, (error, token) => {
-        if (error) {
-            console.log('getNewsCategories error');
-        }
-        else {
-            newsClient.methodCall('news.Categorie', [token, 'it'], callback);
-        }
-    });
-};
-
-/**
- * Gets a list of most important news
- * @param apiKey
- * @param {NewsItemListCallback} callback
- */
-atac.getNewsFirstPage = function (apiKey, callback) {
-    connect(apiKey, (error, token) => {
-        if (error) {
-            console.log('getNewsFirstPage error');
-        }
-        else {
-            newsClient.methodCall('news.PrimaPagina', [token, 'it'], callback);
-        }
-    });
-};
-
-/**
- * Gets a list of the categories for a single news
- * @param apiKey
- * @param {int} newsId id of a news item
- * @param {NewsItemCategoriesListCallback} callback
- */
-atac.getNewsCategoriesForSingleNews = function (apiKey, newsId, callback) {
-    connect(apiKey, (error, token) => {
-        if (error) {
-            console.log('getNewsCategoriesForSingleNews error');
-        }
-        else {
-            newsClient.methodCall('news.CategorieNews', [token, 'it', newsId], callback);
-        }
-    });
-};
-
-/**
- * Gets a list of news for a category
- * @param apiKey
- * @param {int} categoryId id of a category
- * @param {NewsItemListCallback} callback
- */
-atac.getNewsByCategory = function (apiKey, categoryId, callback) {
-    connect(apiKey, (error, token) => {
-        if (error) {
-            console.log('getNewsByCategory error');
-        }
-        else {
-            newsClient.methodCall('news.PerCategoria', [token, 'it', categoryId], callback);
-        }
-    });
-};
-
-/**
- * Gets a single news item
- * @param apiKey
- * @param {int} newsId id of a news item
- * @param {int} categoryId id of a category
- * @param {NewsItemCallback} callback
- */
-atac.getNewsSingle = function (apiKey, newsId, categoryId, callback) {
-    connect(apiKey, (error, token) => {
-        if (error) {
-            console.log('getNewsSingle error');
-        }
-        else {
-            newsClient.methodCall('news.Singola', [token, 'it', newsId, categoryId], callback);
-        }
-    });
-};
-
-/**
- * Gets all the news
- * @param apiKey
- * @param {NewsItemListCallback} callback
- */
-atac.getNewsAll = function (apiKey, callback) {
-    connect(apiKey, (error, token) => {
-        if (error) {
-            console.log('getNewsAll error');
-        }
-        else {
-            newsClient.methodCall('news.Tutte', [token, 'it'], callback);
-        }
-    });
-};
-
-/**
- * Callback function for authentication
- * @callback AuthCallback
- * @property {boolean} error - Error
- * @property {string} token - Auth token
- */
-
-/**
- * Callback function for Bus stop data
- * @callback BusStopCallback
- * @property {boolean} error - Error
- * @property {AtacBusStopResponse} response - Server response
- */
-
-/**
- * Callback function for Line data
- * @callback LineCallback
- * @property {boolean} error - Error
- * @property {AtacLineResponse} response - Server response
- */
-
-/**
- * Callback function for Route data
- * @callback RouteCallback
- * @property {boolean} error - Error
- * @property {AtacRouteResponse} response - Server response
- */
-
-/**
- * Callback function for Next departure data
- * @callback NextDepartureCallback
- * @property {boolean} error - Error
- * @property {AtacNextDepartureResponse} response - Server response
- */
-
-/**
- * Callback function for News Categories data
- * @callback NewsCategoriesListCallback
- * @property {boolean} error - Error
- * @property {AtacNewsCategoriesListResponse} response - Server response
- */
-
-/**
- * Callback function for News Item data
- * @callback NewsItemListCallback
- * @property {boolean} error - Error
- * @property {AtacNewsItemListResponse} response - Server response
- */
-
-/**
- * Callback function for News Item Categories List
- * @callback NewsItemCategoriesListCallback
- * @property {boolean} error - Error
- * @property {AtacNewsItemCategoryListResponse} response - Server response
- */
-
-/**
- * Callback function for News Item data
- * @callback NewsItemCallback
- * @property {boolean} error - Error
- * @property {AtacNewsItemResponse} response - Server response
- */
+//region JSDoc type definitions
 
 /**
  * Atac XMLRPC Bus Stop response
@@ -487,3 +381,5 @@ atac.getNewsAll = function (apiKey, callback) {
  * @property {int} id_categoria - Category ID
  * @property {string} nome_categoria - Category Name
  */
+
+//endregion
