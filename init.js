@@ -165,20 +165,6 @@ module.exports = class AtacApi {
 //region JSDoc type definitions
 
 /**
- * Callback function for News Item Categories List
- * @callback NewsItemCategoriesListCallback
- * @property {boolean} error - Error
- * @property {AtacNewsItemCategoryListResponse} response - Server response
- */
-
-/**
- * Callback function for News Item data
- * @callback NewsItemCallback
- * @property {boolean} error - Error
- * @property {AtacNewsItemResponse} response - Server response
- */
-
-/**
  * Atac XMLRPC Bus Stop response
  * @typedef {Object} AtacBusStopResponse
  * @property {string} id_richesta - Request ID
