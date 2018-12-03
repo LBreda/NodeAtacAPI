@@ -29,7 +29,7 @@ module.exports = class AtacApi {
 
   /**
    * Connects to the API server
-   * @return {string} Session token
+   * @returns {Promise<string>} Session token
    */
   async connect() {
     return asyncRpcCall(authClient, "autenticazione.Accedi", [this.apiKey, ""]);
@@ -38,7 +38,7 @@ module.exports = class AtacApi {
   /**
    * Get data about a bus stop
    * @param {string} busStop - Bus stop number
-   * @return {AtacBusStopResponse}
+   * @returns {Promise<AtacBusStopResponse>}
    */
   async getBusStop(busStop) {
     const session = await this.connect();
@@ -52,7 +52,7 @@ module.exports = class AtacApi {
   /**
    * Get the routes of a bus line
    * @param {string} line
-   * @return {AtacRouteResponse}
+   * @returns {Promise<AtacRouteResponse>}
    */
   async getRoutes(line) {
     const session = await this.connect();
@@ -63,7 +63,7 @@ module.exports = class AtacApi {
    * Get informations about a single route
    * @param {string} routeId
    * @see atac.getRoutes
-   * @return {AtacLineResponse}
+   * @returns {Promise<AtacLineResponse>}
    */
   async getRoute(routeId) {
     const session = await this.connect();
@@ -79,7 +79,7 @@ module.exports = class AtacApi {
   /**
    * Get the next departure from the first stop for a single route
    * @param routeId
-   * @return {AtacNextDepartureResponse}
+   * @returns {Promise<AtacNextDepartureResponse>}
    */
   async getNextDeparture(routeId) {
     const session = await this.connect();
@@ -92,7 +92,7 @@ module.exports = class AtacApi {
 
   /**
    * Get a list of news categories
-   * @return {AtacNewsCategoriesListResponse}
+   * @returns {Promise<AtacNewsCategoriesListResponse>}
    */
   async getNewsCategories() {
     const session = await this.connect();
@@ -101,7 +101,7 @@ module.exports = class AtacApi {
 
   /**
    * Get a list of most important news
-   * @return {AtacNewsItemListResponse}
+   * @returns {Promise<AtacNewsItemListResponse>}
    */
   async getNewsFirstPage() {
     const session = await this.connect();
@@ -111,7 +111,7 @@ module.exports = class AtacApi {
   /**
    * Get a list of the categories for a single news
    * @param {int} newsId id of a news item
-   * @return {AtacNewsItemCategoryListResponse}
+   * @returns {Promise<AtacNewsItemCategoryListResponse>}
    */
   async getNewsCategoriesForSingleNews(newsId) {
     const session = await this.connect();
@@ -125,7 +125,7 @@ module.exports = class AtacApi {
   /**
    * Get a list of news for a category
    * @param {int} categoryId id of a category
-   * @return {AtacNewsItemListResponse}
+   * @returns {Promise<AtacNewsItemListResponse>}
    */
   async getNewsByCategory(categoryId) {
     const session = await this.connect();
@@ -140,7 +140,7 @@ module.exports = class AtacApi {
    * Get a single news item
    * @param {int} newsId id of a news item
    * @param {int} categoryId id of a category
-   * @return {AtacNewsItemResponse}
+   * @returns {Promise<AtacNewsItemResponse>}
    */
   async getNewsSingle(newsId, categoryId) {
     const session = await this.connect();
@@ -154,7 +154,7 @@ module.exports = class AtacApi {
 
   /**
    * Get all the news
-   * @return {AtacNewsItemListResponse}
+   * @returns {Promise<AtacNewsItemListResponse>}
    */
   async getNewsAll() {
     const session = await this.connect();
