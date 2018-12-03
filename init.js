@@ -36,7 +36,7 @@ module.exports = class AtacApi {
   }
 
   /**
-   * Gets data about a bus stop
+   * Get data about a bus stop
    * @param {string} busStop - Bus stop number
    * @return {AtacBusStopResponse}
    */
@@ -50,7 +50,7 @@ module.exports = class AtacApi {
   }
 
   /**
-   * Gets the routes of a bus line
+   * Get the routes of a bus line
    * @param {string} line
    * @return {AtacRouteResponse}
    */
@@ -60,7 +60,7 @@ module.exports = class AtacApi {
   }
 
   /**
-   * Gets informations about a single route
+   * Get informations about a single route
    * @param {string} routeId
    * @see atac.getRoutes
    * @return {AtacLineResponse}
@@ -77,7 +77,7 @@ module.exports = class AtacApi {
   }
 
   /**
-   * Gets the next departure from the first stop for a single route
+   * Get the next departure from the first stop for a single route
    * @param routeId
    * @return {AtacNextDepartureResponse}
    */
@@ -91,7 +91,7 @@ module.exports = class AtacApi {
   }
 
   /**
-   * Gets a list of news categories
+   * Get a list of news categories
    * @return {AtacNewsCategoriesListResponse}
    */
   async getNewsCategories() {
@@ -100,7 +100,7 @@ module.exports = class AtacApi {
   }
 
   /**
-   * Gets a list of most important news
+   * Get a list of most important news
    * @return {AtacNewsItemListResponse}
    */
   async getNewsFirstPage() {
@@ -109,7 +109,7 @@ module.exports = class AtacApi {
   }
 
   /**
-   * Gets a list of the categories for a single news
+   * Get a list of the categories for a single news
    * @param {int} newsId id of a news item
    * @return {AtacNewsItemCategoryListResponse}
    */
@@ -123,7 +123,7 @@ module.exports = class AtacApi {
   }
 
   /**
-   * Gets a list of news for a category
+   * Get a list of news for a category
    * @param {int} categoryId id of a category
    * @return {AtacNewsItemListResponse}
    */
@@ -137,7 +137,7 @@ module.exports = class AtacApi {
   }
 
   /**
-   * Gets a single news item
+   * Get a single news item
    * @param {int} newsId id of a news item
    * @param {int} categoryId id of a category
    * @return {AtacNewsItemResponse}
@@ -153,7 +153,7 @@ module.exports = class AtacApi {
   }
 
   /**
-   * Gets all the news
+   * Get all the news
    * @return {AtacNewsItemListResponse}
    */
   async getNewsAll() {
