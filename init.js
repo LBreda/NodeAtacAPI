@@ -41,7 +41,7 @@ module.exports = class AtacApi {
    * @return {AtacBusStopResponse}
    */
   async getBusStop(busStop) {
-    const session = await connect(this.apiKey);
+    const session = await connect();
     return asyncRpcCall(palineClient, "paline.Previsioni", [
       session,
       busStop,
@@ -55,7 +55,7 @@ module.exports = class AtacApi {
    * @return {AtacRouteResponse}
    */
   async getRoutes(line) {
-    const session = await connect(this.apiKey);
+    const session = await connect();
     return asyncRpcCall(palineClient, "paline.Percorsi", [session, line, "it"]);
   }
 
@@ -66,7 +66,7 @@ module.exports = class AtacApi {
    * @return {AtacLineResponse}
    */
   async getRoute(routeId) {
-    const session = await connect(this.apiKey);
+    const session = await connect();
     return asyncRpcCall(palineClient, "paline.Percorso", [
       session,
       routeId,
@@ -82,7 +82,7 @@ module.exports = class AtacApi {
    * @return {AtacNextDepartureResponse}
    */
   async getNextDeparture(routeId) {
-    const session = await connect(this.apiKey);
+    const session = await connect();
     return asyncRpcCall(palineClient, "paline.ProssimaPartenza", [
       session,
       routeId,
@@ -95,7 +95,7 @@ module.exports = class AtacApi {
    * @return {AtacNewsCategoriesListResponse}
    */
   async getNewsCategories() {
-    const session = await connect(this.apiKey);
+    const session = await connect();
     return asyncRpcCall(newsClient, "news.Categorie", [session, "it"]);
   }
 
@@ -104,7 +104,7 @@ module.exports = class AtacApi {
    * @return {AtacNewsItemListResponse}
    */
   async getNewsFirstPage() {
-    const session = await connect(this.apiKey);
+    const session = await connect();
     return asyncRpcCall(newsClient, "news.PrimaPagina", [session, "it"]);
   }
 
@@ -114,7 +114,7 @@ module.exports = class AtacApi {
    * @return {AtacNewsItemCategoryListResponse}
    */
   async getNewsCategoriesForSingleNews(newsId) {
-    const session = await connect(this.apiKey);
+    const session = await connect();
     return asyncRpcCall(newsClient, "news.CategorieNews", [
       session,
       "it",
@@ -128,7 +128,7 @@ module.exports = class AtacApi {
    * @return {AtacNewsItemListResponse}
    */
   async getNewsByCategory(categoryId) {
-    const session = await connect(this.apiKey);
+    const session = await connect();
     return asyncRpcCall(newsClient, "news.PerCategoria", [
       session,
       "it",
@@ -143,7 +143,7 @@ module.exports = class AtacApi {
    * @return {AtacNewsItemResponse}
    */
   async getNewsSingle(newsId, categoryId) {
-    const session = await connect(this.apiKey);
+    const session = await connect();
     return asyncRpcCall(newsClient, "news.Singola", [
       session,
       "it",
@@ -157,7 +157,7 @@ module.exports = class AtacApi {
    * @return {AtacNewsItemListResponse}
    */
   async getNewsAll() {
-    const session = await connect(this.apiKey);
+    const session = await connect();
     return asyncRpcCall(newsClient, "news.Tutte", [session, "it"]);
   }
 };
