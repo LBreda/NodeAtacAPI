@@ -160,6 +160,15 @@ module.exports = class AtacApi {
     const session = await this.connect();
     return asyncRpcCall(newsClient, "news.Tutte", [session, "it"]);
   }
+
+  /**
+   * Get bus stops and bus lines by name
+   * Use paline.SmartSearch method
+   */
+  async searchByQuery(query) {
+    const session = await this.connect();
+    return asyncRpcCall(palineClient, "paline.SmartSearch", [session, query]);
+  }
 };
 
 //region JSDoc type definitions
