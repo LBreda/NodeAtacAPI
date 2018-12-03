@@ -3,9 +3,6 @@ const { asyncRpcCall } = require("./utils");
 
 const ATAC_HOST = "muovi.roma.it";
 
-// Exported object
-const atac = {};
-
 const authClient = createClient({
   host: ATAC_HOST,
   path: "/ws/xml/autenticazione/1"
@@ -18,153 +15,152 @@ const palineClient = createClient({
 
 const newsClient = createClient({ host: ATAC_HOST, path: "/ws/xml/news/2" });
 
-/**
- * Connects to the API server
- * @param {string} apiKey - Atac API key
- * @return {string} Session token
- */
-function connect(apiKey) {
-  return asyncRpcCall(authClient, "autenticazione.Accedi", [apiKey, ""]);
-}
+module.exports = class AtacApi {
+  constructor(apiKey) {
+    this.apiKey = apiKey || process.env.ATAC_API_KEY;
 
-/**
- * Gets data about a bus stop
- * @param {string} apiKey - API Key
- * @param {string} busStop - Bus stop number
- * @return {AtacBusStopResponse}
- */
-atac.getBusStop = async function(apiKey, busStop) {
-  const session = await connect(apiKey);
-  return asyncRpcCall(palineClient, "paline.Previsioni", [
-    session,
-    busStop,
-    "it"
-  ]);
+    if (!this.apiKey) {
+      // No API Key
+      throw new Error(
+        "No API Key provided. Pass it to AtacApi constructor or put it into ATAC_API_KEY env variable"
+      );
+    }
+  }
+
+  /**
+   * Connects to the API server
+   * @return {string} Session token
+   */
+  async connect() {
+    return asyncRpcCall(authClient, "autenticazione.Accedi", [this.apiKey, ""]);
+  }
+
+  /**
+   * Gets data about a bus stop
+   * @param {string} busStop - Bus stop number
+   * @return {AtacBusStopResponse}
+   */
+  async getBusStop(busStop) {
+    const session = await connect(this.apiKey);
+    return asyncRpcCall(palineClient, "paline.Previsioni", [
+      session,
+      busStop,
+      "it"
+    ]);
+  }
+
+  /**
+   * Gets the routes of a bus line
+   * @param {string} line
+   * @return {AtacRouteResponse}
+   */
+  async getRoutes(line) {
+    const session = await connect(this.apiKey);
+    return asyncRpcCall(palineClient, "paline.Percorsi", [session, line, "it"]);
+  }
+
+  /**
+   * Gets informations about a single route
+   * @param {string} routeId
+   * @see atac.getRoutes
+   * @return {AtacLineResponse}
+   */
+  async getRoute(routeId) {
+    const session = await connect(this.apiKey);
+    return asyncRpcCall(palineClient, "paline.Percorso", [
+      session,
+      routeId,
+      "",
+      "",
+      "it"
+    ]);
+  }
+
+  /**
+   * Gets the next departure from the first stop for a single route
+   * @param routeId
+   * @return {AtacNextDepartureResponse}
+   */
+  async getNextDeparture(routeId) {
+    const session = await connect(this.apiKey);
+    return asyncRpcCall(palineClient, "paline.ProssimaPartenza", [
+      session,
+      routeId,
+      "it"
+    ]);
+  }
+
+  /**
+   * Gets a list of news categories
+   * @return {AtacNewsCategoriesListResponse}
+   */
+  async getNewsCategories() {
+    const session = await connect(this.apiKey);
+    return asyncRpcCall(newsClient, "news.Categorie", [session, "it"]);
+  }
+
+  /**
+   * Gets a list of most important news
+   * @return {AtacNewsItemListResponse}
+   */
+  async getNewsFirstPage() {
+    const session = await connect(this.apiKey);
+    return asyncRpcCall(newsClient, "news.PrimaPagina", [session, "it"]);
+  }
+
+  /**
+   * Gets a list of the categories for a single news
+   * @param {int} newsId id of a news item
+   * @return {AtacNewsItemCategoryListResponse}
+   */
+  async getNewsCategoriesForSingleNews(newsId) {
+    const session = await connect(this.apiKey);
+    return asyncRpcCall(newsClient, "news.CategorieNews", [
+      session,
+      "it",
+      newsId
+    ]);
+  }
+
+  /**
+   * Gets a list of news for a category
+   * @param {int} categoryId id of a category
+   * @return {AtacNewsItemListResponse}
+   */
+  async getNewsByCategory(categoryId) {
+    const session = await connect(this.apiKey);
+    return asyncRpcCall(newsClient, "news.PerCategoria", [
+      session,
+      "it",
+      categoryId
+    ]);
+  }
+
+  /**
+   * Gets a single news item
+   * @param {int} newsId id of a news item
+   * @param {int} categoryId id of a category
+   * @return {AtacNewsItemResponse}
+   */
+  async getNewsSingle(newsId, categoryId) {
+    const session = await connect(this.apiKey);
+    return asyncRpcCall(newsClient, "news.Singola", [
+      session,
+      "it",
+      newsId,
+      categoryId
+    ]);
+  }
+
+  /**
+   * Gets all the news
+   * @return {AtacNewsItemListResponse}
+   */
+  async getNewsAll() {
+    const session = await connect(this.apiKey);
+    return asyncRpcCall(newsClient, "news.Tutte", [session, "it"]);
+  }
 };
-
-/**
- * Gets the routes of a bus line
- * @param {string} apiKey
- * @param {string} line
- * @return {AtacRouteResponse}
- */
-atac.getRoutes = async function(apiKey, line) {
-  const session = await connect(apiKey);
-  return asyncRpcCall(palineClient, "paline.Percorsi", [session, line, "it"]);
-};
-
-/**
- * Gets informations about a single route
- * @param {string} apiKey
- * @param {string} routeId
- * @see atac.getRoutes
- * @return {AtacLineResponse}
- */
-atac.getRoute = async function(apiKey, routeId) {
-  const session = await connect(apiKey);
-  return asyncRpcCall(palineClient, "paline.Percorso", [
-    session,
-    routeId,
-    "",
-    "",
-    "it"
-  ]);
-};
-
-/**
- * Gets the next departure from the first stop for a single route
- * @param apiKey
- * @param routeId
- * @return {AtacNextDepartureResponse}
- */
-atac.getNextDeparture = async function(apiKey, routeId) {
-  const session = await connect(apiKey);
-  return asyncRpcCall(palineClient, "paline.ProssimaPartenza", [
-    session,
-    routeId,
-    "it"
-  ]);
-};
-
-/**
- * Gets a list of news categories
- * @param apiKey
- * @return {AtacNewsCategoriesListResponse}
- */
-atac.getNewsCategories = async function(apiKey) {
-  const session = await connect(apiKey);
-  return asyncRpcCall(newsClient, "news.Categorie", [session, "it"]);
-};
-
-/**
- * Gets a list of most important news
- * @param apiKey
- * @return {AtacNewsItemListResponse}
- */
-atac.getNewsFirstPage = async function(apiKey) {
-  const session = await connect(apiKey);
-  return asyncRpcCall(newsClient, "news.PrimaPagina", [session, "it"]);
-};
-
-/**
- * Gets a list of the categories for a single news
- * @param apiKey
- * @param {int} newsId id of a news item
- * @return {AtacNewsItemCategoryListResponse}
- */
-atac.getNewsCategoriesForSingleNews = async function(apiKey, newsId) {
-  const session = await connect(apiKey);
-  return asyncRpcCall(newsClient, "news.CategorieNews", [
-    session,
-    "it",
-    newsId
-  ]);
-};
-
-/**
- * Gets a list of news for a category
- * @param apiKey
- * @param {int} categoryId id of a category
- * @return {AtacNewsItemListResponse}
- */
-atac.getNewsByCategory = async function(apiKey, categoryId) {
-  const session = await connect(apiKey);
-  return asyncRpcCall(newsClient, "news.PerCategoria", [
-    session,
-    "it",
-    categoryId
-  ]);
-};
-
-/**
- * Gets a single news item
- * @param apiKey
- * @param {int} newsId id of a news item
- * @param {int} categoryId id of a category
- * @return {AtacNewsItemResponse}
- */
-atac.getNewsSingle = async function(apiKey, newsId, categoryId) {
-  const session = await connect(apiKey);
-  return asyncRpcCall(newsClient, "news.Singola", [
-    session,
-    "it",
-    newsId,
-    categoryId
-  ]);
-};
-
-/**
- * Gets all the news
- * @param apiKey
- * @return {AtacNewsItemListResponse}
- */
-atac.getNewsAll = async function(apiKey) {
-  const session = await connect(apiKey);
-  return asyncRpcCall(newsClient, "news.Tutte", [session, "it"]);
-};
-
-
-module.exports = atac;
 
 //region JSDoc type definitions
 
